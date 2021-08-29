@@ -675,7 +675,7 @@ void processMixer(void)
           if (step1 < 0)
           {
             // Multiply SIN[100 - transition] steps (0 to 100)
-            temp3 = 100 - (int8_t)pgm_read_byte(&sin[100 - (int8_t)transition]);
+            temp3 = 100 - (int8_t)pgm_read_byte(&SIN[100 - (int8_t)transition]);
           }
           // If P2 greater than P1, SINE is the one we want
           else
@@ -919,7 +919,7 @@ void updateLimits(void)
   // Move any menu post-processing here so that it happens post-reboot
 
   // Refresh channel order
-  updateChOrder();
+  // updateChOrder(); GLS - TODO
 
   // See if mixer preset has changed. The only time it will ever NOT
   // be "Options" is when the GUI has changed it.
@@ -932,7 +932,7 @@ void updateLimits(void)
   }
 
   // Update MPU6050 LPF and reverse sense of menu items
-  mpu.setDLPFMode(6 - config.mpu6050LPF);
+  mpu.setDLPFMode(6 - config.mpu60x0LPF);
 
   // If Armed setting is not ARMED    // HJI 1.7
   if (config.armMode != ARMED)        // HJI 1.7

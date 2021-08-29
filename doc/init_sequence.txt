@@ -1,0 +1,61 @@
+// ************************************************************
+// * Code
+// ************************************************************
+
+void init(void)
+{
+  
+  //***********************************************************
+  // Start up - load EEPROM
+  //***********************************************************
+
+  //***********************************************************
+  // I/O setup - 4 buttons, 2 LEDs, setupServos()
+  //***********************************************************
+
+  //***********************************************************
+  // RX Configuration - sbus/dsmx/cppm begin
+  //***********************************************************
+
+  //***********************************************************
+  // LCD initialization - u82g
+  //***********************************************************
+
+  //***********************************************************
+  // ESC calibration - Cal ONLY if buttons 1 and 4 pressed
+  //***********************************************************
+
+  //***********************************************************
+  // Reset EEPROM default settings ONLY if middle two buttons pressed
+  //***********************************************************
+    
+  //***********************************************************
+  // i2c/MPU6050 init
+  //*********************************************************** 
+
+  //***********************************************************
+  // Remaining init tasks
+  //***********************************************************
+
+  // Display "Hold steady" message on LCD
+  
+  // Set ADC resolution and averaging
+
+  // Initial gyro calibration - calibrateGyrosSlow(), reboot on fail
+  
+  // Check power-up battery voltage
+  
+  // updateLimits() from mixer.ino - Updates travel and trigger limits
+
+  // Disarm on start-up if Armed setting is ARMABLE
+
+  // Reset IMU with resetIMU() - why?
+
+  // Beep that init is complete
+
+#ifdef ERROR_LOG
+// If restart, log it as such
+add_log(REBOOT);
+#endif
+
+}

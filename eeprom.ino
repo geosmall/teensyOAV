@@ -29,6 +29,12 @@
 // *
 // **************************************************************************
 
+#include "iocfg.h"
+#include "typedefs.h"
+#include "globals.h"
+#include "errors.h"
+
+
 // ************************************************************
 // * Defines
 // ************************************************************
@@ -38,7 +44,7 @@
 // eePROM signature - change for each eePROM structure change to force factory reset or upgrade
 #define V2p0_SIGNATURE  0x45         // EEPROM signature for V2.0 (teensyOAV with 10 outputs)
 
-#define MAGIC_NUMBER V2p0_SIGNATURE  // Set current signature
+#define MAGIC_NUMBER V2p0_SIGNATURE // Set current signature
 
 //************************************************************
 // Code
@@ -49,67 +55,37 @@ const int8_t  FUTABA[MAX_RC_CHANNELS] PROGMEM = {2,0,1,3,4,5,6,7};  // Futaba ch
   
 void saveConfigToEEPROM(void)
 {
-  // Write to eeProm
-  cli();
-  eepromWriteBlockChanges((uint8_t*)&config, (uint8_t*)EEPROM_DATA_START_POS, sizeof(CONFIG_STRUCT));  
-  sei();
-}
-
-// src is the address in RAM
-// dest is the address in eeprom
-void eepromWriteBlockChanges(uint8_t *src, uint8_t *dest, uint16_t size)
-{ 
-  uint16_t len;
-  uint8_t value;
-
-  for (len = 0; len < size; len++)
-  {
-    // Get value at src
-    value = *src;
-    
-    // Write the value at src to dest
-    eepromWriteByteChanged(dest, value);
-    src++;
-    dest++;
-  }
-}
-
-// addr is the address in eeprom
-// value is the value to be written
-void eepromWriteByteChanged(uint8_t *addr, uint8_t value)
-{
-  if (eeprom_read_byte(addr) != value)
-  {
-    eeprom_write_byte(addr, value);
-  }
+  uint8_t result = ERR_OK;
+  // Write to SPI flash eeProm
+  result = FS_WriteToFile(config_file, (uint8_t*)&config, sizeof(config));
 }
 
 bool initialEEPROMConfigLoad(void)
 {
-  bool updated = false;
+  bool update = false;
+  uint8_t result = ERR_OK;
   
-  // Read eeProm data into RAM
-  eeprom_read_block((void*)&config, (const void*)EEPROM_DATA_START_POS, sizeof(CONFIG_STRUCT));
-  
+  // Read SPI flash eeProm data into RAM
+  result = FS_ReadFromFile(config_file, (uint8_t*)&config, sizeof(config));
+
   // See if we know what to do with the current eeprom data
   // config.setup holds the magic number from the current EEPROM
   switch(config.setup)
   {
-    case V2p0_SIGNATURE:  // V2.0
+    case V2p0_SIGNATURE:  // V2.0 - assume eeprom data valid
       break;
       
     default:              // Unknown solution - restore to factory defaults
       // Load factory defaults
       setEEPROMDefaultConfig();
-      updated = true;
+      // Save back to eeprom  
+      saveConfigToEEPROM();
+      update = true;
       break;
   }
-  
-  // Save back to eeprom  
-  saveConfigToEEPROM();
-  
+
   // Return info regarding eeprom structure changes 
-  return updated;
+  return update;
 }
 
 // Force a factory reset
@@ -130,7 +106,7 @@ void setEEPROMDefaultConfig(void)
   config.armMode         = ARMABLE;
   config.accLPF          = HZ21;
   config.gyroLPF         = NOFILTER;
-  config.mpu6050LPF      = HZ44;
+  config.mpu60x0LPF      = HZ44;
   config.cfFactor        = 6;
   config.disarmTimer     = 30;  // Default to 30 seconds
   config.transitionP1n   = 50;  // Set P1.n point to 50%
