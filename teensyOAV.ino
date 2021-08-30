@@ -2,6 +2,7 @@
 #include "typedefs.h"
 #include "globals.h"
 #include "port.h"
+#include "errors.h"
 
 #include "src/sbus/sbus.h"
 #include "src/MPU6000/MPU6000.h"
@@ -14,11 +15,9 @@
 #endif
 
 spi_stm32_t MPU6000_spi;
-const uint32_t SPI_LS_CLOCK =  1000000;
-const uint32_t SPI_HS_CLOCK =  6250000;
 MPU6000 mpu(MPU6000_spi);
 
-SbusRx sbusRx(&Serial1);
+SbusRx sbusRx(&SBUS_SERIALx);
 
 //myPWMServo output0;
 //myPWMServo output1;
@@ -119,7 +118,10 @@ void setup() {
   Serial.println("Initializing...");
   
   /* Initialize board */
-  initialize();
+  int res = initialize();
+  if (res != ERR_OK) {
+    while(1);
+  }
 
   /* Start command line shell */
   shell_init(&shell_impl);

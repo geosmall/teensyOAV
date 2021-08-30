@@ -11,7 +11,7 @@
 #include "errors.h"
 
 
-uint8_t initialize(void)
+int initialize(void)
 {
   uint8_t i;
   uint8_t ret;
@@ -68,6 +68,15 @@ uint8_t initialize(void)
   // RX Configuration - sbus/dsmx/cppm begin
   //***********************************************************
 
+  if (config.rxMode == SBUS)
+  {
+    sbusRx.Begin();
+  }
+  else
+  {
+    // TBD
+  }
+
   //***********************************************************
   // LCD initialization - u82g
   //***********************************************************
@@ -95,7 +104,7 @@ uint8_t initialize(void)
   MPU6000_spi.pin_sclk = MPU_PIN_sclk;
   MPU6000_spi.pin_ssel = MPU_PIN_ssel;
 
-  mpu.initialize(MPU_slaveSelect, SPI_LS_CLOCK, SPI_HS_CLOCK, SPI_STM32_MODE_3, SPI_STM32_MSBFIRST);
+  mpu.initialize(MPU_slaveSelect, MPU_SPI_LS_CLOCK, MPU_SPI_HS_CLOCK, SPI_STM32_MODE_3, SPI_STM32_MSBFIRST);
   mpu.setSpeedSPI(LOW);
 
   if (mpu.testConnection() == false) {
@@ -111,28 +120,46 @@ uint8_t initialize(void)
   mpu.setFullScaleGyroRange(MPU6000_GYRO_FS_2000);
   mpu.setFullScaleAccelRange(MPU6000_ACCEL_FS_4);
 
-
+  /* Set MPU SPI bus to high rate after MPU init */
   mpu.setSpeedSPI(HIGH);
 
   //***********************************************************
   // Remaining init tasks
   //***********************************************************
 
-  // Display "Hold steady" message on LCD
-  
+  // Display "Hold steady" message for gyro calibration
+  Serial.println("HOLD STEADY");
+
   // Set ADC resolution and averaging
 
   // Initial gyro calibration - calibrateGyrosSlow(), reboot on fail
+  if (!calibrateGyrosSlow())
+  {
+    return GYRO_CAL_FAILED;
+  }
+
+  // Update voltage detection
+  // HJI SystemVoltage = GetVbat();        // Check power-up battery voltage
   
-  // Check power-up battery voltage
-  
-  // updateLimits() from mixer.ino - Updates travel and trigger limits
+  updateLimits();  // Update travel and trigger limits
 
   // Disarm on start-up if Armed setting is ARMABLE
+  if (config.armMode == ARMABLE)
+  {
+    generalError |= (1 << DISARMED);  // Set disarmed bit
+  }
 
-  // Reset IMU with resetIMU() - why?
+  // Reset IMU
+  resetIMU();
 
   // Beep that init is complete
+  // Check buzzer mode first
+  if (config.buzzer == ON)
+  {
+    // HJI LVA = 1;
+    delay(25);
+    // HJI LVA = 0;
+  }
 
 #ifdef ERROR_LOG
 // If restart, log it as such

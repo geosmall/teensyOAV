@@ -30,10 +30,6 @@ SPI_TypeDef *_SPIx;
 
 // =======================================================
 
-const uint32_t SPI_LS_CLOCK =  1000000;
-//const uint32_t SPI_LS_CLOCK =  250000;
-const uint32_t SPI_HS_CLOCK =  6250000;
-
 static spi_stm32_t w25q64_spi;
 
 PinName csPinName = PB_12;
@@ -75,7 +71,7 @@ uint32_t W25_Init(void) {
 
   _SPIx = w25q64_spi.handle.Instance;
 
-  spi_stm32_init(&w25q64_spi, SPI_LS_CLOCK, SPI_STM32_MODE_0, SPI_STM32_MSBFIRST);
+  spi_stm32_init(&w25q64_spi, W25_SPI_CLOCK, SPI_STM32_MODE_0, SPI_STM32_MSBFIRST);
 
   pinMode(pinNametoDigitalPin(csPinName), OUTPUT);
   W25_CS_DISABLE();

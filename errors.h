@@ -1,5 +1,17 @@
 #pragma once
 
+#define ERR_OK                          0x00U /*!< OK */
+#define ERR_NO_SPI_FLASH                0x02U /*!< No SPI flash chip detected. */
+#define ERR_SPI_FLASH_FS_MOUNT          0x03U /*!< Unable to mount SPI flash file system. */
+#define ERR_NO_IMU		                  0x04U /*!< No imu detected. */
+#define GYRO_CAL_FAILED                 0x05U /*!< Gyro calibration failed. */
+#define ERR_FAILED                      0x06U /*!< Requested functionality or process failed. */
+#define ERR_OVERFLOW                    0x07U /*!< Timer overflow. */
+#define ERR_RANGE                       0x08U /*!< Parameter out of range. */
+#define ERR_FAULT                       0x09U /*!< Fault error is detected. */
+
+#if 0
+
 /* error codes */
 #define ERR_OK                          0x00U /*!< OK */
 #define ERR_SPEED                       0x01U /*!< This device does not work in the active speed mode. */
@@ -58,3 +70,5 @@
 #define ERR_NO_SPI_FLASH                0x99U /*!< No SPI flash chip detected. */
 #define ERR_SPI_FLASH_FS_MOUNT          0x9AU /*!< Unable to mount SPI flash file system. */
 #define ERR_NO_IMU		                  0x9BU /*!< No imu detected. */
+
+#endif

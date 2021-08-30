@@ -7,6 +7,7 @@
 // #define LED_ON(__PIN__)   digitalWrite(__PIN__, LOW);
 // #define LED_OFF(__PIN__)   digitalWrite(__PIN__, HIGH);
 
+#define SBUS_SERIALx Serial1
 
 #define EXEC_TIMx TIM1
 
@@ -17,11 +18,16 @@ const PinName MPU_PIN_sclk = PA_5;    // ORG
 const PinName MPU_PIN_ssel = NC;      // SSEL CS contolled by SW
 const PinName MPU_slaveSelect = PA_4; // BLU
 
+const uint32_t MPU_SPI_LS_CLOCK =  1000000;
+const uint32_t MPU_SPI_HS_CLOCK =  6250000;
+
 #define W25_SPIx SPI2
 const PinName W25_PIN_mosi = PB_15;
 const PinName W25_PIN_miso = PB_14;
 const PinName W25_PIN_sclk = PB_13;
 const PinName W25_PIN_ssel = NC;
+
+const uint32_t W25_SPI_CLOCK =  1000000;
 
 const int warningLED = PB4;
 const int statusLED = PB5;
