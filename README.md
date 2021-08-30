@@ -19,14 +19,16 @@ https://mcuoneclipse.com/2019/01/06/driver-and-shell-for-winbond-w25q128-16mbyte
 Main Loop Tick Interval Timer  
 
 **TIM3**  
-PB0 - Servo out 1  
-PB1 - Servo out 2  
+PB0 - Servo out 1 - TIM3_CH3  
+PB1 - Servo out 2 - TIM3_CH4  
 
 **TIM2**  
-PA3 - Servo out 3  
-PA2 - Servo out 4  
-PA1 - Servo out 5  
-PA0 - Servo out 6   
+PA3 - Servo out 3 - TIM2_CH4  
+PA2 - Servo out 4 - TIM2_CH3  
+
+**TIM5**  
+PA1 - Servo out 5 - TIM5_CH2  
+PA0 - Servo out 6 - TIM5_CH1  
 
 ```C
 PB0 - Servo out 1  
