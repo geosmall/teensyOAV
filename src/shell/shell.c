@@ -116,7 +116,7 @@ static void prv_process(void) {
   prv_send_prompt();
 }
 
-void shell_boot(const sShellImpl *impl) {
+void shell_init(const sShellImpl *impl) {
   s_shell.send_char = impl->send_char;
   prv_reset_rx_buffer();
   prv_echo_str("\n" SHELL_PROMPT);

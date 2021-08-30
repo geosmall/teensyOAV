@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "port.h"
 #include "src/SPIdev/spi_stm32.h"
 #include "src/printf/printf.h"
 #include "src/UTIL1/UTIL1.h"
@@ -65,11 +66,12 @@ uint32_t W25_Init(void) {
   uint16_t mfg_id;
   uint32_t JEDEC_id;
 
-  w25q64_spi.handle.Instance = SPI2;
-  w25q64_spi.pin_mosi = PB_15;
-  w25q64_spi.pin_miso = PB_14;
-  w25q64_spi.pin_sclk = PB_13;
-  w25q64_spi.pin_ssel = NC;
+  /* Config W25 SPI port per settings from port.h */
+  w25q64_spi.handle.Instance = W25_SPIx;
+  w25q64_spi.pin_mosi = W25_PIN_mosi;
+  w25q64_spi.pin_miso = W25_PIN_miso;
+  w25q64_spi.pin_sclk = W25_PIN_sclk;
+  w25q64_spi.pin_ssel = W25_PIN_ssel;
 
   _SPIx = w25q64_spi.handle.Instance;
 

@@ -21,7 +21,7 @@ typedef struct ShellImpl {
 } sShellImpl;
 
 //! Initializes the demo shell. To be called early at boot.
-void shell_boot(const sShellImpl *impl);
+void shell_init(const sShellImpl *impl);
 
 //! Call this when a character is received. The character is processed synchronously.
 void shell_receive_char(char c);

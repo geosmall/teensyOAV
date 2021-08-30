@@ -1,3 +1,5 @@
+#pragma once
+
 // #if defined(ARDUINO_ARCH_STM32)   // Arduino_Core_STM32
 
 // #if defined(ARDUINO_GENERIC_F405RGTX) || defined(ARDUINO_GENERIC_F407VETX) || defined(ARDUINO_BLACK_F407VE) || defined(ARDUINO_BLACK_F407VG)
@@ -5,12 +7,21 @@
 // #define LED_ON(__PIN__)   digitalWrite(__PIN__, LOW);
 // #define LED_OFF(__PIN__)   digitalWrite(__PIN__, HIGH);
 
-#define SPIx SPI1
-const PinName PIN_miso = PA_6;    // YEL
-const PinName PIN_mosi = PA_7;    // GRN
-const PinName PIN_sclk = PA_5;    // ORG
-const PinName PIN_ssel = NC;      // SSEL CS contolled by SW
-const PinName slaveSelect = PA_4; // BLU
+
+#define EXEC_TIMx TIM1
+
+#define MPU_SPIx SPI1
+const PinName MPU_PIN_miso = PA_6;    // YEL
+const PinName MPU_PIN_mosi = PA_7;    // GRN
+const PinName MPU_PIN_sclk = PA_5;    // ORG
+const PinName MPU_PIN_ssel = NC;      // SSEL CS contolled by SW
+const PinName MPU_slaveSelect = PA_4; // BLU
+
+#define W25_SPIx SPI2
+const PinName W25_PIN_mosi = PB_15;
+const PinName W25_PIN_miso = PB_14;
+const PinName W25_PIN_sclk = PB_13;
+const PinName W25_PIN_ssel = NC;
 
 const int warningLED = PB4;
 const int statusLED = PB5;

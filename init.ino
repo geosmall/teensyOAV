@@ -85,15 +85,17 @@ uint8_t initialize(void)
   //*********************************************************** 
 
   // set slaveSelect pin output high (set BSRR bit) before pinMode to avoid transient low
-  LL_GPIO_SetOutputPin(set_GPIO_Port_Clock(STM_PORT(slaveSelect)), STM_LL_GPIO_PIN(slaveSelect));
-  pinMode(pinNametoDigitalPin(slaveSelect), OUTPUT);
-  MPU6000_spi.handle.Instance = SPIx;
-  MPU6000_spi.pin_miso = PIN_miso;
-  MPU6000_spi.pin_mosi = PIN_mosi;
-  MPU6000_spi.pin_sclk = PIN_sclk;
-  MPU6000_spi.pin_ssel = PIN_ssel;
+  LL_GPIO_SetOutputPin(set_GPIO_Port_Clock(STM_PORT(MPU_slaveSelect)), STM_LL_GPIO_PIN(MPU_slaveSelect));
+  pinMode(pinNametoDigitalPin(MPU_slaveSelect), OUTPUT);
 
-  mpu.initialize(slaveSelect, SPI_LS_CLOCK, SPI_HS_CLOCK, SPI_STM32_MODE_3, SPI_STM32_MSBFIRST);
+  /* Config MPU SPI port per settings from port.h */
+  MPU6000_spi.handle.Instance = MPU_SPIx;
+  MPU6000_spi.pin_miso = MPU_PIN_miso;
+  MPU6000_spi.pin_mosi = MPU_PIN_mosi;
+  MPU6000_spi.pin_sclk = MPU_PIN_sclk;
+  MPU6000_spi.pin_ssel = MPU_PIN_ssel;
+
+  mpu.initialize(MPU_slaveSelect, SPI_LS_CLOCK, SPI_HS_CLOCK, SPI_STM32_MODE_3, SPI_STM32_MSBFIRST);
   mpu.setSpeedSPI(LOW);
 
   if (mpu.testConnection() == false) {

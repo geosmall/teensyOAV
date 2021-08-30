@@ -919,7 +919,7 @@ void updateLimits(void)
   // Move any menu post-processing here so that it happens post-reboot
 
   // Refresh channel order
-  // updateChOrder(); GLS - TODO
+  updateChOrder();
 
   // See if mixer preset has changed. The only time it will ever NOT
   // be "Options" is when the GUI has changed it.
