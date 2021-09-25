@@ -32,10 +32,9 @@ SPI_TypeDef *_SPIx;
 
 static spi_stm32_t w25q64_spi;
 
-PinName csPinName = PB_12;
 /* W25Q128 chip select is LOW active */
-#define W25_CS_ENABLE()  digitalWriteFast(csPinName, LOW)
-#define W25_CS_DISABLE() digitalWriteFast(csPinName, HIGH)
+#define W25_CS_ENABLE()  digitalWriteFast(W25_slaveSelect, LOW)
+#define W25_CS_DISABLE() digitalWriteFast(W25_slaveSelect, HIGH)
 
 #define std_printf printf_
 
@@ -73,7 +72,7 @@ uint32_t W25_Init(void) {
 
   spi_stm32_init(&w25q64_spi, W25_SPI_CLOCK, SPI_STM32_MODE_0, SPI_STM32_MSBFIRST);
 
-  pinMode(pinNametoDigitalPin(csPinName), OUTPUT);
+  pinMode(pinNametoDigitalPin(W25_slaveSelect), OUTPUT);
   W25_CS_DISABLE();
   delay(200);
 

@@ -22,7 +22,10 @@ int initialize(void)
 
   // Initialize SPI flash file system
   if (W25_Init() != ERR_OK) {
+    printf_("ERROR: SPI Flash init failed\r\n");
     return ERR_NO_SPI_FLASH;
+  } else {
+    printf_("SPI Flash init successful\r\n");
   }
 
   // Attempt SPI flash file system mount, drive might not be formatted so
@@ -37,6 +40,8 @@ int initialize(void)
     if (FS_Mount() != ERR_OK) {
       printf_("ERROR: Mount after format failed\r\n");
       return ERR_SPI_FLASH_FS_MOUNT;
+    } else {
+      printf_("File System mount successful\r\n");
     }
   }
   FS_PrintStatus();
@@ -51,12 +56,18 @@ int initialize(void)
   // Load EEPROM settings
   updated = initialEEPROMConfigLoad(); // Config now contains valid values
 
-  FS_PrintHexFile("./config.txt");
+  // FS_PrintHexFile("./config.txt");
   FS_Dir("./");
 
   //***********************************************************
   // I/O setup - 4 buttons, 2 LEDs, setupServos()
   //***********************************************************
+
+  // Button Inputs
+  // pinMode(BUTTON1, INPUT_PULLUP);
+  // pinMode(BUTTON2, INPUT_PULLUP);
+  // pinMode(BUTTON3, INPUT_PULLUP);
+  // pinMode(BUTTON4, INPUT_PULLUP);
 
   // Heartbeat LED
   pinMode(HEARTBEAT_LED, OUTPUT);
@@ -64,17 +75,22 @@ int initialize(void)
   // Status LED
   pinMode(STATUS_LED, OUTPUT);
 
+  // PWM Outputs
+  if (setupServos() != ERR_OK) {
+    return SERVO_SETUP_FAILED;
+  } else {
+    printf_("Servos setup successful\r\n");
+  }
+
   //***********************************************************
   // RX Configuration - sbus/dsmx/cppm begin
   //***********************************************************
 
-  if (config.rxMode == SBUS)
-  {
+  if (config.rxMode == SBUS) {
     sbusRx.Begin();
-  }
-  else
-  {
-    // TBD
+    printf_("SBUS setup successful\r\n");
+  } else {
+    return RX_INIT_FAILED;
   }
 
   //***********************************************************
@@ -88,10 +104,10 @@ int initialize(void)
   //***********************************************************
   // Reset EEPROM default settings ONLY if middle two buttons pressed
   //***********************************************************
-    
+
   //***********************************************************
   // i2c/MPU6050 init
-  //*********************************************************** 
+  //***********************************************************
 
   // set slaveSelect pin output high (set BSRR bit) before pinMode to avoid transient low
   LL_GPIO_SetOutputPin(set_GPIO_Port_Clock(STM_PORT(MPU_slaveSelect)), STM_LL_GPIO_PIN(MPU_slaveSelect));
@@ -111,6 +127,9 @@ int initialize(void)
     Serial.println("MPU6000 initialization unsuccessful");
     Serial.println("Check MPU6000 wiring or try cycling power");
     return ERR_NO_IMU;
+  }else{
+      printf_("MPU setup successful\r\n");
+
   }
 
   mpu.setClockSource(MPU6000_CLOCK_PLL_XGYRO);
@@ -140,7 +159,7 @@ int initialize(void)
 
   // Update voltage detection
   // HJI SystemVoltage = GetVbat();        // Check power-up battery voltage
-  
+
   updateLimits();  // Update travel and trigger limits
 
   // Disarm on start-up if Armed setting is ARMABLE
@@ -163,7 +182,7 @@ int initialize(void)
 
 #ifdef ERROR_LOG
 // If restart, log it as such
-add_log(REBOOT);
+  add_log(REBOOT);
 #endif
 
   return ERR_OK;

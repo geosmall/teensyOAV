@@ -1,14 +1,19 @@
 #pragma once
 
 #define ERR_OK                          0x00U /*!< OK */
-#define ERR_NO_SPI_FLASH                0x02U /*!< No SPI flash chip detected. */
-#define ERR_SPI_FLASH_FS_MOUNT          0x03U /*!< Unable to mount SPI flash file system. */
-#define ERR_NO_IMU		                  0x04U /*!< No imu detected. */
-#define GYRO_CAL_FAILED                 0x05U /*!< Gyro calibration failed. */
-#define ERR_FAILED                      0x06U /*!< Requested functionality or process failed. */
-#define ERR_OVERFLOW                    0x07U /*!< Timer overflow. */
-#define ERR_RANGE                       0x08U /*!< Parameter out of range. */
-#define ERR_FAULT                       0x09U /*!< Fault error is detected. */
+
+#define ERR_FAILED                      0x01U /*!< Requested functionality or process failed. */
+#define ERR_OVERFLOW                    0x02U /*!< Timer overflow. */
+#define ERR_RANGE                       0x03U /*!< Parameter out of range. */
+#define ERR_FAULT                       0x04U /*!< Fault error is detected. */
+
+#define ERR_NO_SPI_FLASH                0x05U /*!< No SPI flash chip detected. */
+#define ERR_SPI_FLASH_FS_MOUNT          0x06U /*!< Unable to mount SPI flash file system. */
+#define ERR_NO_IMU		                  0x07U /*!< No imu detected. */
+#define GYRO_CAL_FAILED                 0x08U /*!< Gyro calibration failed. */
+#define RX_INIT_FAILED                  0x09U /*!< RX initialization failed. */
+#define SERVO_SETUP_FAILED              0x0AU /*!< Servo setup failed. */
+ 
 
 #if 0
 

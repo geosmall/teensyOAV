@@ -221,7 +221,7 @@ void tasks500Hz(void) {
   calculatePID();
   processMixer();
   updateServos();
-  // servoCmds();
+  servoCmds();
 }
 
 void menuMethods(void) {

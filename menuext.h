@@ -77,10 +77,7 @@ typedef struct
   int8_t  defaultValue;  // Default value for this item
 } menuRange_t; 
 
-const uint16_t curvesMenuText[NUMBEROFCURVES] PROGMEM = 
-{
-  0, 0, 0, 0, 0, 0
-};
+const uint16_t curvesMenuText[NUMBEROFCURVES] PROGMEM = {0};
 
 const uint16_t curvesMenuOffsets[NUMBEROFCURVES] PROGMEM = 
 {
@@ -157,10 +154,7 @@ const menuRange_t curvesMenuRanges[NUMBEROFCURVES][NUMBEROFPOINTS+1] PROGMEM =
   },
 };
 
-const uint16_t offsetsMenuText[MAX_OUTPUTS] PROGMEM = 
-{
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+const uint16_t offsetsMenuText[MAX_OUTPUTS] = {0};
 
 const uint16_t offsetsMenuOffsets[MAX_OUTPUTS] PROGMEM = 
 {

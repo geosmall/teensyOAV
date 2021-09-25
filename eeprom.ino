@@ -44,7 +44,7 @@
 // eePROM signature - change for each eePROM structure change to force factory reset or upgrade
 #define V2p0_SIGNATURE  0x45         // EEPROM signature for V2.0 (teensyOAV with 10 outputs)
 
-#define MAGIC_NUMBER V2p0_SIGNATURE // Set current signature
+#define MAGIC_NUMBER V2p0_SIGNATURE  // Set current signature
 
 //************************************************************
 // Code
