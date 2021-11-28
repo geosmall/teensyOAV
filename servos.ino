@@ -11,20 +11,20 @@
 // *             GNU GPL V3 notice
 // **************************************************************************
 // * Copyright (C) 2016 David Thompson
-// *
+// * 
 // * This program is free software: you can redistribute it and/or modify
 // * it under the terms of the GNU General Public License as published by
 // * the Free Software Foundation, either version 3 of the License, or
 // * (at your option) any later version.
-// *
+// * 
 // * This program is distributed in the hope that it will be useful,
 // * but WITHOUT ANY WARRANTY; without even the implied warranty of
 // * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // * GNU General Public License for more details.
-// *
+// * 
 // * You should have received a copy of the GNU General Public License
 // * along with this program. If not, see <http://www.gnu.org/licenses/>.
-// *
+// * 
 // * tl;dr - all derivative code MUST be released with the source code!
 // *
 // **************************************************************************
@@ -37,16 +37,20 @@ void servoCmds(void)
 {
   int32_t temp;
   uint8_t i = 0;
-  /*
-    Serial.print(servoOut[0]); Serial.print("\t");
-    Serial.print(servoOut[1]); Serial.print("\t");
-    Serial.print(servoOut[2]); Serial.print("\t");
-    Serial.print(servoOut[3]); Serial.print("\t");
-    Serial.print(servoOut[4]); Serial.print("\t");
-    Serial.print(servoOut[5]); Serial.print("\t");
-    Serial.print(servoOut[6]); Serial.print("\t");
-    Serial.println(servoOut[7]);
-  */
+
+#if 0
+  Serial.print(servoOut[0]); Serial.print("\t");
+  Serial.print(servoOut[1]); Serial.print("\t");
+  Serial.print(servoOut[2]); Serial.print("\t");
+  Serial.print(servoOut[3]); Serial.print("\t");
+  Serial.print(servoOut[4]); Serial.print("\t");
+  Serial.print(servoOut[5]); Serial.print("\t");
+  Serial.print(servoOut[6]); Serial.print("\t");
+  Serial.print(servoOut[7]); Serial.print("\t");
+  Serial.print(servoOut[8]); Serial.print("\t");
+  Serial.println(servoOut[9]);
+#endif
+
   // Re-span numbers from internal values to microseconds and check limits
   for (i = 0; i < MAX_OUTPUTS; i++)
   {
@@ -61,9 +65,9 @@ void servoCmds(void)
     else
     {
       // Scale motor from 2500~5000 to 1000~2000
-      temp = ((temp << 2) + 5) / 10;  // Round and convert
+      temp = ((temp << 2) + 5) / 10;  // Round and convert  
     }
-
+    
     // Enforce min, max travel limits in microseconds
     if (temp > config.limits[i].maximum)
     {
@@ -93,16 +97,20 @@ void servoCmds(void)
       }
     }
   }
-  /*
-    Serial.print(servoCmd[0]); Serial.print("\t");
-    Serial.print(servoCmd[1]); Serial.print("\t");
-    Serial.print(servoCmd[2]); Serial.print("\t");
-    Serial.print(servoCmd[3]); Serial.print("\t");
-    Serial.print(servoCmd[4]); Serial.print("\t");
-    Serial.print(servoCmd[5]); Serial.print("\t");
-    Serial.print(servoCmd[6]); Serial.print("\t");
-    Serial.println(servoCmd[7]); Serial.println();
-  */
+
+#if 0
+  Serial.print(servoCmd[0]); Serial.print("\t");
+  Serial.print(servoCmd[1]); Serial.print("\t");
+  Serial.print(servoCmd[2]); Serial.print("\t");
+  Serial.print(servoCmd[3]); Serial.print("\t");
+  Serial.print(servoCmd[4]); Serial.print("\t");
+  Serial.print(servoCmd[5]); Serial.print("\t");
+  Serial.print(servoCmd[6]); Serial.print("\t");
+  Serial.print(servoCmd[7]); Serial.print("\t");
+  Serial.print(servoCmd[8]); Serial.print("\t");
+  Serial.println(servoCmd[9]);
+#endif
+
 }
 
 int setupServos(void)

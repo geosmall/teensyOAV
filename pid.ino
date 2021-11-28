@@ -79,8 +79,6 @@ float hpfV    = 0;
 void sensorPID(float period)
 {
   float tempF1    = 0;
-  float tempF2    = 0;
-  float factor    = 0;  // Interval in seconds since the last loop
   float gyroAdcF  = 0;
   int8_t i        = 0;
   int8_t  axis    = 0; 
@@ -188,42 +186,29 @@ void sensorPID(float period)
 
     p1Temp = gyroAdc[axis] + stickP1;
     p2Temp = gyroAdc[axis] + stickP2;
-    
-    // Work out multiplication factor compared to standard loop time
-    factor = period;
-    
-    // Adjust gyro and stick values based on factor   
-    tempF2 = p1Temp;           // Promote int32_t to float
-    tempF2 = tempF2 * factor;
-    p1Temp = (int32_t)tempF2;  // Demote to int32_t
-    
-    tempF2 = p2Temp;
-    tempF2 = tempF2 * factor;
-    p2Temp = (int32_t)tempF2;
 
-    //************************************************************
-    // Increment gyro I-terms
-    //************************************************************
+    // Adjust gyro and stick values based on period
+    // I hate magic numbers, but the 403.14 seems necessary to get
+    // the I term to rise to max value in one second with a gyro
+    // input of 50, per the initial comments in this file.  Not
+    // sure why this is.
+    integralGyro[P1][axis] += (float)p1Temp * period * 403.14f;
+    integralGyro[P2][axis] += (float)p2Temp * period * 403.14f;
     
-    // Calculate I-term from gyro and stick data 
-    // These may look similar, but they are constrained quite differently.
-    integralGyro[P1][axis] += p1Temp;
-    integralGyro[P2][axis] += p2Temp;
-
     //************************************************************
     // Limit the I-terms to the user-set limits
     //************************************************************
     
     for (i = P1; i <= P2; i++)
     {
-      if (integralGyro[i][axis] > config.rawIConstrain[i][axis])
+      if (integralGyro[i][axis] > (float)config.rawIConstrain[i][axis])
       {
-        integralGyro[i][axis] = config.rawIConstrain[i][axis];
+        integralGyro[i][axis] = (float)config.rawIConstrain[i][axis];
       }
       
-      if (integralGyro[i][axis] < -config.rawIConstrain[i][axis])
+      if (integralGyro[i][axis] < (float)-config.rawIConstrain[i][axis])
       {
-        integralGyro[i][axis] = -config.rawIConstrain[i][axis];
+        integralGyro[i][axis] = (float)-config.rawIConstrain[i][axis];
       }
     }
 
@@ -242,57 +227,10 @@ void sensorPID(float period)
   // Also, shrink the integral by a small fraction to temper 
   // remaining offsets.
   //************************************************************    
-/*
-  if (config.AccVertFilter == ON)
-  {
-    IntegralAccVertf[P1] += (accVertf + accVertZerof);      // Remove current DC offset from accVert
-    IntegralAccVertf[P2] += (accVertf + accVertZerof);    
-  }
-
-  else
-  {
-*/    
-    integralAccelVertF[P1] += accelVertF;
-    integralAccelVertF[P2] += accelVertF;   
-//  }
-
-/*    
-  // Calculate the correct decimator number so that the current max I value
-  // decimates in 10s. intervalf is the interval in seconds
   
-  // Convert (period) from units of 400ns (1/2500000) to seconds (10s/400ns = 25000000)
-  tempf1 = period;          // Promote uint32_t to float
-  intervalf = tempf1/25000000.0f;   // This gives the period in 1/10 seconds
-    
-  tempf1 = config.Raw_I_Constrain[P1][ZED];
-  tempf1 = tempf1 * intervalf;
+  integralAccelVertF[P1] += accelVertF;
+  integralAccelVertF[P2] += accelVertF;   
 
-  tempf2 = config.Raw_I_Constrain[P2][ZED];
-  tempf2 = tempf2 * intervalf;
-
-  if (IntegralAccVertf[P1] > 0)
-  {
-    IntegralAccVertf[P1] = IntegralAccVertf[P1] - (int32_t)tempf1;    // Decimator. Shrink integrals within 10s
-  }
-  else
-  {
-    IntegralAccVertf[P1] = IntegralAccVertf[P1] + (int32_t)tempf1;
-  }
-  
-  if (IntegralAccVertf[P2] > 0)
-  {
-    IntegralAccVertf[P2] = IntegralAccVertf[P2] - (int32_t)tempf2;  
-  }
-  else
-  {
-    IntegralAccVertf[P2] = IntegralAccVertf[P2] + (int32_t)tempf2;
-  }
-*/  
-
-/*  
-  IntegralAccVertf[P1] = IntegralAccVertf[P1] * 0.9995f;      // Decimator. Shrink integrals by .05%
-  IntegralAccVertf[P2] = IntegralAccVertf[P2] * 0.9995f;
-*/
   tempF1 = config.accelVertFilter;  // Promote AccVertfilter (0 to 127)
   tempF1 = tempF1 / 10000.0f;
   tempF1 = 1.0f - tempF1;
@@ -300,7 +238,6 @@ void sensorPID(float period)
   integralAccelVertF[P1] = integralAccelVertF[P1] * tempF1;  // Decimator. Shrink integrals by user-set amount
   integralAccelVertF[P2] = integralAccelVertF[P2] * tempF1;
 
-  
   //************************************************************
   // Limit the Z-acc I-terms to the user-set limits
   //************************************************************
@@ -331,8 +268,8 @@ void calculatePID(void)
   int32_t pidGyroIActual2 = 0;  // P2
   int32_t p1PGain         = 0;  // HJI 1.7
   int32_t p2PGain         = 0;  // HJI 1.7
-  int32_t p1IGain         = 0;  // HJI 1.7
-  int32_t p2IGain         = 0;  // HJI 1.7
+  float   p1IGain         = 0;  // HJI 1.7
+  float   p2IGain         = 0;  // HJI 1.7
   int8_t  axis = 0;
   int8_t i = 0;
 
@@ -401,20 +338,21 @@ void calculatePID(void)
     p2PGain = (int32_t)pGain[P2][axis];  // HJI 1.7
     p2IGain = (int32_t)iGain[P2][axis];  // HJI 1.7
 
-    // Gyro P-term                                       // Profile P1
-    pidGyroTemp1 += gyroAdc[axis] * p1PGain;             // Multiply P-term (Max gain of 127)
-    pidGyroTemp1  = pidGyroTemp1 * (int32_t)3;           // Multiply by 3
+    // Gyro P-term                                                  // Profile P1
+    pidGyroTemp1 += gyroAdc[axis] * p1PGain;                        // Multiply P-term (Max gain of 127)
+    pidGyroTemp1  = pidGyroTemp1 * (int32_t)3;                      // Multiply by 3
 
     // Gyro I-term
-    pidGyroIActual1 = integralGyro[P1][axis] * p1IGain;  // Multiply I-term (Max gain of 127)
-    pidGyroIActual1 = pidGyroIActual1 >> 5;              // Divide by 32
+    pidGyroIActual1 = (int32_t)(integralGyro[P1][axis] * p1IGain);  // Multiply I-term (Max gain of 127)
+    
+    pidGyroIActual1 = pidGyroIActual1 >> 5;                         // Divide by 32
 
-    // Gyro P-term                                       // Profile P2
+    // Gyro P-term                                                  // Profile P2
     pidGyroTemp2 += gyroAdc[axis] * p2PGain;
     pidGyroTemp2  = pidGyroTemp2 * (int32_t)3;
 
     // Gyro I-term
-    pidGyroIActual2 = integralGyro[P2][axis] * p2IGain;
+    pidGyroIActual2 = (int32_t)(integralGyro[P2][axis] * p2IGain);
     pidGyroIActual2 = pidGyroIActual2 >> 5;
 
     //************************************************************

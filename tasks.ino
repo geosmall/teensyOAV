@@ -218,6 +218,16 @@ void tasks500Hz(void) {
   profileTransition();
   imuUpdate(0.002f);
   sensorPID(0.002f);
+  
+  // Check for throttle reset
+  if (monopolarThrottle < THROTTLEIDLE)  // THROTTLEIDLE = 50
+  {
+    // Reset I-terms at throttle cut. Using memset saves code space
+    memset(&integralGyro[P1][ROLL], 0, sizeof(float) * 6);
+    integralAccelVertF[P1] = 0.0;
+    integralAccelVertF[P2] = 0.0;
+  }
+
   calculatePID();
   processMixer();
   updateServos();
@@ -319,11 +329,4 @@ void menuMethods(void) {
     default:
       break;
   }
-}
-
-void serialDebug10Hz(void) {
-  Serial.print(config.channel[0].p1Value);  Serial.print("  ");
-  Serial.print(config.channel[1].p1Value);  Serial.print("  ");
-  Serial.print(config.channel[2].p1Value);  Serial.print("  ");
-  Serial.println(config.channel[3].p1Value);
 }
